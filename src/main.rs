@@ -1,16 +1,24 @@
 #[macro_use]
 extern crate penrose;
 
+#[macro_use]
+extern crate penrose_conf;
+
 use penrose::{
     core::{
         bindings::KeyEventHandler,
         config::Config,
         helpers::index_selectors,
+        layout::{side_stack, bottom_stack, Layout, LayoutConf},
         manager::WindowManager,
     },
     logging_error_handler,
     xcb::new_xcb_backed_window_manager,
     Backward, Forward, Less, More, Selector,
+};
+
+use penrose_conf::{
+    consts::*
 };
 
 use simplelog::{LevelFilter, SimpleLogger};
@@ -27,7 +35,12 @@ fn main() -> penrose::Result<()> {
         panic!("unable to set log level: {}", e);
     };
 
-    let config = Config::default();
+    let config = Config::default().builder()
+        .workspaces(vec!["1", "2", "3", "4"])
+        .layouts(vec![
+            layout!("[side]", side_stack),
+            layout!("[botom]", bottom_stack),
+        ]);
     let key_bindings = gen_keybindings! {
         // Program launchers
         "M-n" => run_external!(LAUNCHER);
@@ -42,7 +55,7 @@ fn main() -> penrose::Result<()> {
         "M-S-j" => run_internal!(drag_client, Forward);
         "M-S-k" => run_internal!(drag_client, Backward);
         "M-f" => run_internal!(toggle_client_fullscreen, &Selector::Focused);
-        "M-q" => run_internal!(kill_client);
+        "M-S-q" => run_internal!(kill_client);
 
         // workspace management
         "M-w" => run_internal!(toggle_workspace);
