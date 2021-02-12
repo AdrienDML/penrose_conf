@@ -1,12 +1,9 @@
 extern crate penrose;
 
-use penrose::{
-    core::layout::{
-        LayoutConf,Layout
-    }
-};
 
 pub mod consts;
+pub mod widget;
+
 #[macro_export]
 macro_rules! layout {
     { $name:expr, $func:expr } => {
